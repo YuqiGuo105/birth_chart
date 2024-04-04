@@ -61,7 +61,7 @@ Body:
 
 ### Swagger API Documentation
 
-To view and interact with the API documentation, navigate to https://birth-chart.vercel.app/api-docs after starting the server.
+To view and interact with the API documentation, navigate to http://localhost:3000/api-docs after starting the server.
 
 ## Built With
 

@@ -3,17 +3,74 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
+// Swagger imports
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
 const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 const API_BASE_URL = 'https://horoscopes.astro-seek.com/';
 
+// Swagger setup
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Birth Chart API Documentation',
+      version: '1.0.0',
+      description: 'API for generating birth charts',
+      contact: {
+        name: 'API Support',
+        email: 'support@example.com',
+      },
+    },
+    servers: [{
+      url: `http://localhost:${PORT}`,
+    }],
+  },
+  apis: ['./index.js'],
+};
+
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 // Root route handler
 app.get('/', (req, res) => {
   res.send('Welcome to the Birth Chart API!');
 });
 
+/**
+ * @swagger
+ * /birth-chart:
+ *   post:
+ *     summary: Create a birth chart.
+ *     description: Accepts date, time, and city to create a personalized birth chart.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 description: Date of birth in YYYY-MM-DD format.
+ *               time:
+ *                 type: string
+ *                 description: Time of birth in HH:MM format.
+ *               city:
+ *                 type: string
+ *                 description: City of birth.
+ *     responses:
+ *       200:
+ *         description: Birth chart created successfully.
+ *       400:
+ *         description: Missing required fields.
+ *       500:
+ *         description: Failed to fetch birth chart information.
+ */
 app.post('/birth-chart', async (req, res) => {
   const {date, time, city} = req.body;
 
